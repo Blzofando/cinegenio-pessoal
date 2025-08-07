@@ -4,8 +4,12 @@ import { searchTMDb, getTMDbDetails, fetchPosterUrl } from './TMDbService';
 
 // Helper para chamar nossa API segura
 async function callSecureApi(payload: { prompt: string; schema?: any; tools?: any; }) {
-    // A URL completa é necessária para o teste local
-    const apiUrl = `${import.meta.env.VITE_API_URL || ''}/api/recommend`;
+    // CORREÇÃO: Usamos um caminho relativo para produção (Netlify)
+    // e a URL completa apenas para desenvolvimento local.
+    const apiUrl = import.meta.env.PROD 
+      ? '/.netlify/functions/recommend' 
+      : `${import.meta.env.VITE_API_URL || ''}/api/recommend`;
+
     const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -18,14 +22,14 @@ async function callSecureApi(payload: { prompt: string; schema?: any; tools?: an
     return response.json();
 }
 
-// CORREÇÃO: O tipo SuggestionFilters foi movido de volta para cá para resolver o erro de importação.
+// O tipo SuggestionFilters é definido e exportado aqui.
 export type SuggestionFilters = {
     category: MediaType | null;
     genres: string[];
     keywords: string;
 };
 
-// Helper para formatar os dados para os prompts
+// Helper para formatar os dados para os prompts (continua o mesmo)
 const formatWatchedDataForPrompt = (data: AllManagedWatchedData, sessionExclude: string[] = []): string => {
     const permanentTitles = Object.values(data).flat().map(item => item.title);
     const allToExclude = [...new Set([...permanentTitles, ...sessionExclude])];
@@ -44,7 +48,7 @@ ${formatList(data.naoGostei)}
     `.trim();
 };
 
-// O schema que a IA deve seguir
+// O schema que a IA deve seguir (continua o mesmo)
 const recommendationSchema = {
     type: "OBJECT",
     properties: {
