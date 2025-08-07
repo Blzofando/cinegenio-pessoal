@@ -1,0 +1,203 @@
+/* src/components/StatsView.module.css */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  padding: 1rem;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.mainTitle {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  background-color: #1f2937; /* bg-gray-800 */
+  padding: 1.5rem;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.cardTitle {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700;
+  text-align: center;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+/* --- Stat Cards Específico --- */
+.statCardsContainer {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.statItem .statValue {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700;
+  color: #818cf8; /* text-indigo-400 */
+}
+
+.statItem .statLabel {
+  color: #9ca3af; /* text-gray-400 */
+  margin-top: 0.25rem;
+}
+
+/* --- Pie Chart Específico --- */
+.pieChartContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .pieChartContainer {
+    flex-direction: row;
+  }
+}
+
+.pieChartSvg {
+  width: 12rem; /* w-48 */
+  height: 12rem; /* h-48 */
+  transform: rotate(-90deg);
+}
+
+.pieChartLegend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem; /* text-sm */
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+}
+
+.legendColorBox {
+  width: 0.75rem; /* w-3 */
+  height: 0.75rem; /* h-3 */
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.legendName {
+  font-weight: 600;
+  color: #d1d5db; /* text-gray-300 */
+}
+
+.legendValue {
+  margin-left: 0.5rem;
+  color: #9ca3af; /* text-gray-400 */
+}
+
+/* --- Bar Chart Específico --- */
+.barChartContainer {
+  grid-column: 1 / -1; /* md:col-span-2 */
+}
+
+.barChartList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* space-y-3 */
+}
+
+.barChartItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem; /* text-sm */
+}
+
+.barLabel {
+  width: 8rem; /* w-32 */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #9ca3af; /* text-gray-400 */
+  text-align: right;
+}
+
+.barTrack {
+  flex-grow: 1;
+  background-color: #374151; /* bg-gray-700 */
+  border-radius: 9999px;
+  height: 2rem; /* h-8 */
+  display: flex;
+  align-items: center;
+}
+
+.barFill {
+  background-color: #6366f1; /* bg-indigo-500 */
+  height: 100%;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 0.5rem;
+}
+
+.barValue {
+  font-weight: 700;
+  color: white;
+  font-size: 0.75rem; /* text-xs */
+}
+
+/* --- Estado Vazio --- */
+.emptyStateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.emptyStateCard {
+  text-align: center;
+  padding: 4rem 1rem;
+  background-color: #1f2937; /* bg-gray-800 */
+  border-radius: 0.5rem; /* rounded-lg */
+  width: 100%;
+  max-width: 32rem; /* max-w-lg */
+}
+
+.emptyStateText {
+  font-size: 1.5rem; /* text-2xl */
+  color: #9ca3af; /* text-gray-400 */
+}
+
+.emptyStateSubtext {
+  color: #6b7280; /* text-gray-500 */
+  margin-top: 0.5rem;
+}

@@ -1,0 +1,56 @@
+/* src/components/MainMenu.module.css */
+.container {
+  min-height: 100vh;
+  background-color: #111827;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+}
+.highlight {
+  color: #818cf8;
+}
+.subtitle {
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  color: #9ca3af;
+}
+.buttonGroup {
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.menuButton {
+  background-color: #1f2937;
+  font-weight: 700;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px -1px #0000001a;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+.menuButton:hover {
+  background-color: #4f46e5;
+  transform: scale(1.05);
+}
+.icon {
+  font-size: 1.5rem;
+}

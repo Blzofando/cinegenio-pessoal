@@ -1,0 +1,93 @@
+/* src/components/RandomView.module.css */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #9ca3af;
+  margin-bottom: 2rem;
+  max-width: 42rem;
+}
+
+.surpriseButton {
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.surpriseButton:hover {
+  background-color: #4338ca;
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px -3px rgb(79 70 229 / 0.3), 0 4px 6px -4px rgb(79 70 229 / 0.3);
+}
+
+.surpriseButton:disabled {
+  background-color: #4b5563;
+  cursor: not-allowed;
+  transform: scale(1);
+}
+
+.loadingSpinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  border-bottom: 2px solid #818cf8;
+}
+
+.loadingText {
+  font-size: 1.125rem;
+  color: #9ca3af;
+}
+
+.error {
+  margin-top: 2rem;
+  color: #fca5a5;
+  background-color: rgba(220, 38, 38, 0.2);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.recommendationContainer {
+  animation: fadeIn 0.5s ease-in-out;
+}

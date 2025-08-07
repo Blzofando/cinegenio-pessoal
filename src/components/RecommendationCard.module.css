@@ -1,0 +1,241 @@
+/* src/components/RecommendationCard.module.css */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Estilos para o Card Principal (com Pôster) --- */
+.cardWrapper {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 56rem; /* max-w-4xl */
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.cardContainer {
+  position: relative;
+  background-color: #111827; /* bg-gray-900 */
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  overflow: hidden;
+  border: 1px solid #374151; /* border-gray-700 */
+}
+
+.backgroundLayer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.5s;
+}
+
+.blurOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+}
+
+.contentGrid {
+  position: relative;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .contentGrid {
+    padding: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+.posterContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .posterContainer {
+    grid-column: span 1 / span 1;
+  }
+}
+
+.posterImage {
+  width: 12rem; /* w-48 */
+  max-width: 16rem; /* max-w-xs */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  transition: transform 0.3s;
+}
+
+.posterImage:hover {
+  transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
+  .posterImage {
+    width: 100%;
+  }
+}
+
+.detailsContainer {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .detailsContainer {
+    grid-column: span 2 / span 2;
+  }
+}
+
+.title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 2.25rem; /* lg:text-4xl */
+  }
+}
+
+.metaInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.875rem; /* text-sm */
+  color: #d1d5db; /* text-gray-300 */
+  font-weight: 500;
+}
+
+.metaInfo span:nth-child(2) {
+  color: #818cf8; /* text-indigo-400 */
+}
+
+.sectionsContainer {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600;
+  color: #a5b4fc; /* text-indigo-300 */
+  margin-bottom: 0.25rem;
+}
+
+.sectionText {
+  color: #e5e7eb; /* text-gray-200 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.625; /* leading-relaxed */
+}
+
+/* --- Barra de Probabilidades --- */
+.probabilitiesContainer {
+  margin-top: 1.5rem;
+}
+
+.probabilityList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.probabilityItem {
+  display: flex;
+  align-items: center;
+}
+
+.probabilityLabel {
+  width: 6rem; /* w-24 */
+  font-size: 0.875rem; /* text-sm */
+  color: #d1d5db; /* text-gray-300 */
+  text-transform: capitalize;
+}
+
+.progressBarTrack {
+  flex-grow: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  height: 1.25rem; /* h-5 */
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 700;
+  padding-right: 0.5rem;
+  color: white;
+  transition: width 0.5s;
+}
+
+.probAmei { background-color: #22c55e; } /* bg-green-500 */
+.probGostei { background-color: #6366f1; } /* bg-indigo-500 */
+.probMeh { background-color: #eab308; } /* bg-yellow-500 */
+.probNaoGostei { background-color: #ef4444; } /* bg-red-500 */
+
+/* --- Estilos para o OldCard (Fallback) --- */
+.oldCardWrapper {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 42rem; /* max-w-2xl */
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.oldCardContainer {
+  background-color: #1f2937; /* bg-gray-800 */
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  padding: 1.5rem;
+  text-align: left;
+  border: 1px solid #374151; /* border-gray-700 */
+}
+
+.oldCardTitle {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  color: #818cf8; /* text-indigo-400 */
+}
+
+.oldCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.875rem; /* text-sm */
+  color: #9ca3af; /* text-gray-400 */
+}
+
+.oldCardSectionTitle {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600;
+  color: #d1d5db; /* text-gray-300 */
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.oldCardSectionText {
+  color: #9ca3af; /* text-gray-400 */
+}
+
+.oldCardProgressBarTrack {
+  flex-grow: 1;
+  background-color: #374151; /* bg-gray-700 */
+  border-radius: 9999px;
+  height: 1.25rem; /* h-5 */
+}

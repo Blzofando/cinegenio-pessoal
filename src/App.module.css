@@ -1,0 +1,50 @@
+/* src/App.module.css */
+
+.viewContainer {
+  position: relative;
+  min-height: 100vh;
+  background-color: #111827; /* bg-gray-900 */
+  color: white;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .viewContainer {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .viewContainer {
+    padding: 2rem;
+  }
+}
+
+.backButton {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: #1f2937; /* bg-gray-800 */
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem; /* rounded-lg */
+  transition: background-color 0.3s;
+  z-index: 10;
+  border: none;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background-color: #4f46e5; /* hover:bg-indigo-600 */
+}
+
+.content {
+  margin-top: 3rem; /* mt-12 */
+}
+
+@media (min-width: 640px) {
+  .content {
+    margin-top: 4rem; /* sm:mt-16 */
+  }
+}
