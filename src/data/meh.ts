@@ -1,5 +1,5 @@
 // meh.ts
-import { WatchedItem } from '../types';
+import type { WatchedItem } from '../types';
 
 export const mehList: WatchedItem[] = [
   { id: 804150, tmdbMediaType: 'movie', title: 'O Urso do Pó Branco (2023)', type: 'Filme', genre: 'Thriller' },

@@ -1,5 +1,5 @@
 // amei.ts
-import { WatchedItem } from '../types';
+import type { WatchedItem } from '../types';
 
 export const ameiList: WatchedItem[] = [
   { id: 1087192, tmdbMediaType: 'movie', title: 'Como Treinar o Seu Dragão (2025)', type: 'Filme', genre: 'Fantasia' },

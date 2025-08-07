@@ -1,5 +1,5 @@
 // gostei.ts
-import { WatchedItem } from '../types';
+import type { WatchedItem } from '../types';
 
 export const gosteiList: WatchedItem[] = [
   { id: 97051, tmdbMediaType: 'movie', title: 'Would You Rather (2012)', type: 'Filme', genre: 'Suspense' },

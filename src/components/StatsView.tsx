@@ -1,7 +1,16 @@
 import React, { useContext, useMemo } from 'react';
 import { WatchedDataContext } from '../App';
 import type { Rating, MediaType } from '../types';
-import styles from './StatsView.module.css'; // Importa o CSS
+import styles from './StatsView.module.css';
+
+// --- Tipagem Explícita para os Dados das Estatísticas ---
+// Adicionamos esta interface para dizer ao TypeScript o formato exato do nosso objeto 'stats'.
+interface IStatsData {
+  totalItems: number;
+  ratingsCount: Record<Rating, number>;
+  typeCount: Record<MediaType, number>;
+  topGenres: { genre: string; count: number }[];
+}
 
 const ratingStyles: Record<Rating, { color: string, name: string }> = {
     amei: { color: '#4ade80', name: 'Amei' },
@@ -70,7 +79,8 @@ const BarChart = ({ data }: { data: { genre: string, count: number }[] }) => {
 const StatsView: React.FC = () => {
   const { data } = useContext(WatchedDataContext);
 
-  const stats = useMemo(() => {
+  // CORREÇÃO: Adicionamos <IStatsData | null> para sermos explícitos sobre o tipo.
+  const stats = useMemo<IStatsData | null>(() => {
     const allItems = Object.values(data).flat();
     if (allItems.length === 0) return null;
 
