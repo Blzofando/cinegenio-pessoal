@@ -54,20 +54,27 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
         throw new Error("A resposta da IA está vazia ou em um formato inválido.");
     }
 
-    // --- CORREÇÃO FINAL AQUI ---
-    // Limpa a resposta da IA, removendo o "embrulho" de markdown se ele existir.
     let responseText = result.text.trim();
     if (responseText.startsWith("```json")) {
         responseText = responseText.substring(7, responseText.length - 3).trim();
     } else if (responseText.startsWith("```")) {
         responseText = responseText.substring(3, responseText.length - 3).trim();
     }
+    
+    // --- CORREÇÃO DE ROBUSTEZ ---
+    // Adicionamos um try-catch aqui para garantir que o parse não quebre a função
+    try {
+        JSON.parse(responseText); // Apenas testamos se o parse funciona
+    } catch (e) {
+        console.error("Erro de parse do JSON da IA:", responseText);
+        throw new Error("A resposta da IA não era um JSON válido.");
+    }
     // -------------------------
 
     return {
       statusCode: 200,
       headers,
-      body: responseText // Envia o JSON já limpo como uma string
+      body: responseText 
     };
   } catch (error) {
     console.error('Erro ao chamar a API do Gemini:', error);
