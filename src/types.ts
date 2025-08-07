@@ -60,3 +60,11 @@ export interface PredictionResult {
   prediction: string;
   reason: string;
 }
+// Adicione esta interface no final do seu arquivo src/types.ts
+export interface WatchedItem {
+  id: number;
+  tmdbMediaType: 'movie' | 'tv';
+  title: string;
+  type: MediaType;
+  genre: string;
+}
