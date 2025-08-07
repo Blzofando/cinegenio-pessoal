@@ -4,11 +4,8 @@ import { searchTMDb, getTMDbDetails, fetchPosterUrl } from './TMDbService';
 
 // Helper para chamar nossa API segura
 async function callSecureApi(payload: { prompt: string; schema?: any; tools?: any; }) {
-    // CORREÇÃO: Usamos um caminho relativo para produção (Netlify)
-    // e a URL completa apenas para desenvolvimento local.
-    const apiUrl = import.meta.env.PROD 
-      ? '/.netlify/functions/recommend' 
-      : `${import.meta.env.VITE_API_URL || ''}/api/recommend`;
+    // CORREÇÃO: Usamos o caminho correto para as funções da Netlify.
+    const apiUrl = '/.netlify/functions/recommend';
 
     const response = await fetch(apiUrl, {
         method: 'POST',
@@ -29,7 +26,7 @@ export type SuggestionFilters = {
     keywords: string;
 };
 
-// Helper para formatar os dados para os prompts (continua o mesmo)
+// Helper para formatar os dados para os prompts
 const formatWatchedDataForPrompt = (data: AllManagedWatchedData, sessionExclude: string[] = []): string => {
     const permanentTitles = Object.values(data).flat().map(item => item.title);
     const allToExclude = [...new Set([...permanentTitles, ...sessionExclude])];
@@ -37,44 +34,66 @@ const formatWatchedDataForPrompt = (data: AllManagedWatchedData, sessionExclude:
     return `
 **Itens já na coleção do usuário ou sugeridos nesta sessão (NUNCA SUGERIR ESTES):**
 ${allToExclude.length > 0 ? allToExclude.join(', ') : 'Nenhum'}
+
 **Amei (obras que considero perfeitas, alvo principal para inspiração):**
 ${formatList(data.amei)}
-**Gostei (obras muito boas, boas pistas do que faltou para ser 'amei'):**
+
+**Gostei (obras boas que faltou algo para ser 'amei'):**
 ${formatList(data.gostei)}
+
 **Indiferente (obras que achei medianas, armadilhas a evitar):**
 ${formatList(data.meh)}
+
 **Não Gostei (obras que não me agradaram, elementos a excluir completamente):**
 ${formatList(data.naoGostei)}
     `.trim();
 };
 
-// O schema que a IA deve seguir (continua o mesmo)
+// O schema que a IA deve seguir
 const recommendationSchema = {
     type: "OBJECT",
     properties: {
-        title: { type: "STRING" },
-        type: { type: "STRING", enum: ['Filme', 'Série', 'Anime', 'Programa'] },
-        genre: { type: "STRING" },
-        synopsis: { type: "STRING" },
+        title: { type: "STRING", description: "O título oficial do filme/série, incluindo o ano. Ex: 'Interestelar (2014)'" },
+        type: { type: "STRING", enum: ['Filme', 'Série', 'Anime', 'Programa'], description: "A categoria da mídia." },
+        genre: { type: "STRING", description: "O gênero principal da mídia. Ex: 'Ficção Científica/Aventura'." },
+        synopsis: { type: "STRING", description: "Uma sinopse curta e envolvente de 2-3 frases." },
         probabilities: {
             type: "OBJECT",
             properties: {
-                amei: { type: "INTEGER" },
-                gostei: { type: "INTEGER" },
-                meh: { type: "INTEGER" },
-                naoGostei: { type: "INTEGER" }
+                amei: { type: "INTEGER", description: "Probabilidade (0-100) de o usuário AMAR." },
+                gostei: { type: "INTEGER", description: "Probabilidade (0-100) de o usuário GOSTAR." },
+                meh: { type: "INTEGER", description: "Probabilidade (0-100) de o usuário achar MEDIANO." },
+                naoGostei: { type: "INTEGER", description: "Probabilidade (0-100) de o usuário NÃO GOSTAR." }
             },
             required: ["amei", "gostei", "meh", "naoGostei"]
         },
-        analysis: { type: "STRING" }
+        analysis: { type: "STRING", description: "Sua análise detalhada, explicando por que esta recomendação se encaixa no perfil do usuário. Ex: 'Como você amou A Origem...'" }
     },
     required: ["title", "type", "genre", "synopsis", "probabilities", "analysis"]
 };
 
-// Função atualizada para usar a API segura
 const callGeminiWithSchema = async (prompt: string): Promise<Omit<Recommendation, 'posterUrl'>> => {
     const payload = { prompt, schema: recommendationSchema };
     return callSecureApi(payload);
+};
+
+// --- NOVA FUNÇÃO INTELIGENTE ---
+const clarifyMovieTitle = async (userQuery: string): Promise<string> => {
+    const prompt = `Um usuário digitou "${userQuery}" para encontrar um filme ou série. Esta busca pode ser informal, conter erros de digitação, ou ser um título futuro. Sua tarefa é analisar a busca e retornar o termo de busca MAIS PROVÁVEL e OFICIAL para encontrar este item na API do The Movie Database (TMDb). Retorne APENAS o nome corrigido e oficial.
+
+Exemplos:
+- Input: "quarteto fantastico 2025" -> Output: "The Fantastic Four"
+- Input: "batman o cavaleiro das trevas" -> Output: "The Dark Knight"
+- Input: "a casa do dragao" -> Output: "House of the Dragon"
+
+Sua resposta deve ser APENAS o título corrigido.
+
+Input: "${userQuery}"
+Output:`;
+
+    const response = await callSecureApi({ prompt, tools: [{googleSearch: {}}] });
+    // A API segura retorna um objeto { text: "..." } para respostas de texto puro
+    return response.text || userQuery; 
 };
 
 export const getRandomSuggestion = async (watchedData: AllManagedWatchedData, sessionExclude: string[] = []): Promise<Recommendation> => {
@@ -146,7 +165,7 @@ ${JSON.stringify(searchResults.map(r => ({ id: r.id, title: r.title || r.name, o
 Com base na sua análise, qual é o ID correto? Responda APENAS com o número do ID.`;
     
     const response = await callSecureApi({ prompt, tools: [{googleSearch: {}}] });
-    const parsedId = parseInt(response as any, 10);
+    const parsedId = parseInt(response.text as any, 10);
 
     if (!isNaN(parsedId) && searchResults.some(r => r.id === parsedId)) {
         return parsedId;
@@ -159,22 +178,28 @@ Com base na sua análise, qual é o ID correto? Responda APENAS com o número do
 
 export const getFullMediaDetailsFromQuery = async (query: string): Promise<Omit<ManagedWatchedItem, 'rating' | 'createdAt'>> => {
     let searchResults: TMDbSearchResult[] = [];
+    
     searchResults = await searchTMDb(query, 'pt-BR');
     if (searchResults.length === 0) {
        searchResults = await searchTMDb(query, 'en-US');
     }
+
     if (searchResults.length === 0) {
-        const simplifiedQuery = query.replace(/\s*\([^)]*\)\s*/g, '').trim();
-        if (simplifiedQuery && simplifiedQuery !== query) {
-            searchResults = await searchTMDb(simplifiedQuery, 'pt-BR');
-             if (searchResults.length === 0) {
-               searchResults = await searchTMDb(simplifiedQuery, 'en-US');
-             }
+        console.log(`Busca inicial por "${query}" falhou. Pedindo ajuda da IA...`);
+        const clarifiedQuery = await clarifyMovieTitle(query);
+        console.log(`IA sugeriu a busca: "${clarifiedQuery}"`);
+        if (clarifiedQuery && clarifiedQuery.toLowerCase() !== query.toLowerCase()) {
+            searchResults = await searchTMDb(clarifiedQuery, 'pt-BR');
+            if (searchResults.length === 0) {
+                searchResults = await searchTMDb(clarifiedQuery, 'en-US');
+            }
         }
     }
+    
     if (!searchResults || searchResults.length === 0) {
-        throw new Error(`Nenhum resultado encontrado para "${query}", mesmo após buscas alternativas.`);
+        throw new Error(`Nenhum resultado encontrado para "${query}", mesmo após buscas alternativas com IA.`);
     }
+
     const bestMatchId = await findBestTMDbMatch(query, searchResults);
     if (!bestMatchId) {
         throw new Error("A IA não conseguiu identificar um resultado correspondente.");
@@ -184,6 +209,7 @@ export const getFullMediaDetailsFromQuery = async (query: string): Promise<Omit<
         throw new Error("Ocorreu um erro interno ao selecionar o resultado após a análise da IA.");
     }
     const details = await getTMDbDetails(bestMatch.id, bestMatch.media_type);
+    
     let mediaType: MediaType = 'Filme';
     let titleWithYear = '';
     if (bestMatch.media_type === 'tv') {
