@@ -1,16 +1,13 @@
 import { GoogleGenAI } from "@google/genai";
 import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
 
-// O formato do handler muda para o padrão da Netlify
 const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
-  // Configurações de CORS para permitir chamadas do seu site
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type'
   };
 
-  // Responde a requisições OPTIONS (necessário para CORS)
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -37,7 +34,6 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
   }
 
   try {
-    // O corpo da requisição vem como uma string no Netlify
     if (!event.body) {
         throw new Error("Corpo da requisição está vazio.");
     }
@@ -58,11 +54,20 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
         throw new Error("A resposta da IA está vazia ou em um formato inválido.");
     }
 
-    // A Netlify espera um objeto de retorno com statusCode e body
+    // --- CORREÇÃO FINAL AQUI ---
+    // Limpa a resposta da IA, removendo o "embrulho" de markdown se ele existir.
+    let responseText = result.text.trim();
+    if (responseText.startsWith("```json")) {
+        responseText = responseText.substring(7, responseText.length - 3).trim();
+    } else if (responseText.startsWith("```")) {
+        responseText = responseText.substring(3, responseText.length - 3).trim();
+    }
+    // -------------------------
+
     return {
       statusCode: 200,
       headers,
-      body: result.text.trim() // O JSON já é uma string, então não precisa de JSON.stringify
+      body: responseText // Envia o JSON já limpo como uma string
     };
   } catch (error) {
     console.error('Erro ao chamar a API do Gemini:', error);
