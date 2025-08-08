@@ -4,8 +4,9 @@ import { searchTMDb, getTMDbDetails, fetchPosterUrl } from './TMDbService';
 
 // Helper para chamar nossa API segura
 async function callSecureApi(payload: { prompt: string; schema?: any; tools?: any; }) {
-    // CORREÇÃO: Usamos o caminho correto para as funções da Netlify.
-    const apiUrl = '/.netlify/functions/recommend';
+    // CORREÇÃO FINAL: Usamos o caminho /api/ que definimos no netlify.toml.
+    // Este caminho funciona tanto localmente com `netlify dev` quanto no site publicado.
+    const apiUrl = '/api/recommend';
 
     const response = await fetch(apiUrl, {
         method: 'POST',
@@ -16,11 +17,10 @@ async function callSecureApi(payload: { prompt: string; schema?: any; tools?: an
         const errorBody = await response.json();
         throw new Error(errorBody.error || 'Falha ao chamar a API segura');
     }
-    // A resposta da Netlify Function já vem como JSON, então a usamos diretamente.
     return response.json();
 }
 
-// CORREÇÃO: O tipo SuggestionFilters é definido e exportado aqui.
+// O tipo SuggestionFilters é definido e exportado aqui.
 export type SuggestionFilters = {
     category: MediaType | null;
     genres: string[];
