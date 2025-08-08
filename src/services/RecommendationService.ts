@@ -16,10 +16,11 @@ async function callSecureApi(payload: { prompt: string; schema?: any; tools?: an
         const errorBody = await response.json();
         throw new Error(errorBody.error || 'Falha ao chamar a API segura');
     }
+    // A resposta da Netlify Function já vem como JSON, então a usamos diretamente.
     return response.json();
 }
 
-// O tipo SuggestionFilters é definido e exportado aqui.
+// CORREÇÃO: O tipo SuggestionFilters é definido e exportado aqui.
 export type SuggestionFilters = {
     category: MediaType | null;
     genres: string[];
@@ -92,8 +93,7 @@ Input: "${userQuery}"
 Output:`;
 
     const response = await callSecureApi({ prompt, tools: [{googleSearch: {}}] });
-    // A API segura retorna um objeto { text: "..." } para respostas de texto puro
-    return response.text || userQuery; 
+    return (response as any) || userQuery; 
 };
 
 export const getRandomSuggestion = async (watchedData: AllManagedWatchedData, sessionExclude: string[] = []): Promise<Recommendation> => {
@@ -165,7 +165,7 @@ ${JSON.stringify(searchResults.map(r => ({ id: r.id, title: r.title || r.name, o
 Com base na sua análise, qual é o ID correto? Responda APENAS com o número do ID.`;
     
     const response = await callSecureApi({ prompt, tools: [{googleSearch: {}}] });
-    const parsedId = parseInt(response.text as any, 10);
+    const parsedId = parseInt(response as any, 10);
 
     if (!isNaN(parsedId) && searchResults.some(r => r.id === parsedId)) {
         return parsedId;
